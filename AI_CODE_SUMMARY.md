@@ -77,3 +77,9 @@ Format per entry:
 - **What was generated:** Dead-letter queue publishing for consumer processing failures and related config/docs updates.
 - **Modifications made:** Added DLQ topic config, Kafka producer-based DLQ sender, and config test coverage while preserving existing ingestion behavior.
 - **Files affected:** apps/worker/src/kafka-consumer.service.ts, libs/common/src/config.ts, libs/common/src/__tests__/config.spec.ts, README.md, AI_CODE_SUMMARY.md
+
+## [2026-04-12 23:22:09 CEST] - Task 1 acceptance verification and BufferService unit tests
+- **Tool used:** Codex (GPT-5)
+- **What was generated:** New BufferService unit tests for single-flight flush behavior, failure requeue, timer clearing, and debug delay.
+- **Modifications made:** Fixed strict TypeScript typing in async resolver setup and validated with build/unit/integration test runs.
+- **Files affected:** apps/worker/src/__tests__/buffer.service.spec.ts, AI_CODE_SUMMARY.md
