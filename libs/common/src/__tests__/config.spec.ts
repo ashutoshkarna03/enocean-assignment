@@ -5,6 +5,7 @@ describe('loadConfig', () => {
     const config = loadConfig();
     expect(config.kafka.brokers).toEqual(['localhost:9092']);
     expect(config.kafka.topic).toBe('device.events');
+    expect(config.kafka.dlqTopic).toBe('device.events.dlq');
     expect(config.mongo.uri).toBe('mongodb://localhost:27017');
     expect(config.flush.intervalMs).toBe(500);
     expect(config.flush.maxBufferSize).toBe(10);
@@ -13,11 +14,17 @@ describe('loadConfig', () => {
 
   it('should respect env vars', () => {
     process.env.KAFKA_BROKERS = 'broker1:9092,broker2:9092';
+    process.env.KAFKA_TOPIC = 'custom.events';
+    process.env.KAFKA_DLQ_TOPIC = 'custom.events.failed';
     process.env.FLUSH_DEBUG_DELAY_MS = '100';
     const config = loadConfig();
     expect(config.kafka.brokers).toEqual(['broker1:9092', 'broker2:9092']);
+    expect(config.kafka.topic).toBe('custom.events');
+    expect(config.kafka.dlqTopic).toBe('custom.events.failed');
     expect(config.flush.debugDelayMs).toBe(100);
     delete process.env.KAFKA_BROKERS;
+    delete process.env.KAFKA_TOPIC;
+    delete process.env.KAFKA_DLQ_TOPIC;
     delete process.env.FLUSH_DEBUG_DELAY_MS;
   });
 });

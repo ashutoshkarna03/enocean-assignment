@@ -7,6 +7,7 @@ export interface AppConfig {
     brokers: string[];
     groupId: string;
     topic: string;
+    dlqTopic: string;
   };
   mongo: {
     uri: string;
@@ -21,11 +22,13 @@ export interface AppConfig {
 }
 
 export function loadConfig(): AppConfig {
+  const topic = process.env.KAFKA_TOPIC || 'device.events';
   return {
     kafka: {
       brokers: (process.env.KAFKA_BROKERS || 'localhost:9092').split(','),
       groupId: process.env.KAFKA_GROUP_ID || 'enocean-worker',
-      topic: process.env.KAFKA_TOPIC || 'device.events',
+      topic,
+      dlqTopic: process.env.KAFKA_DLQ_TOPIC || `${topic}.dlq`,
     },
     mongo: {
       uri: process.env.MONGO_URI || 'mongodb://localhost:27017',

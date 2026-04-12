@@ -71,3 +71,9 @@ Format per entry:
 - **What was generated:** Minimal lock-based race fix using `flushing` flag and buffer swap pattern per device.
 - **Modifications made:** Replaced prior complex flush strategy with requested simpler implementation and updated shared `BufferEntry` type.
 - **Files affected:** apps/worker/src/buffer.service.ts, libs/common/src/types.ts, AI_CODE_SUMMARY.md
+
+## [2026-04-12 23:17:30 CEST] - Kafka DLQ support implementation
+- **Tool used:** Codex (GPT-5)
+- **What was generated:** Dead-letter queue publishing for consumer processing failures and related config/docs updates.
+- **Modifications made:** Added DLQ topic config, Kafka producer-based DLQ sender, and config test coverage while preserving existing ingestion behavior.
+- **Files affected:** apps/worker/src/kafka-consumer.service.ts, libs/common/src/config.ts, libs/common/src/__tests__/config.spec.ts, README.md, AI_CODE_SUMMARY.md

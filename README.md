@@ -85,6 +85,7 @@ npx ts-node apps/api/src/main.ts
 | `KAFKA_BROKERS` | `localhost:9092` | Kafka broker addresses |
 | `KAFKA_GROUP_ID` | `enocean-worker` | Consumer group ID |
 | `KAFKA_TOPIC` | `device.events` | Topic to consume |
+| `KAFKA_DLQ_TOPIC` | `device.events.dlq` | Dead-letter topic for malformed/failed messages |
 | `MONGO_URI` | `mongodb://localhost:27017` | MongoDB connection URI |
 | `MONGO_DB` | `enocean` | Database name |
 | `FLUSH_INTERVAL_MS` | `500` | Buffer flush interval |
