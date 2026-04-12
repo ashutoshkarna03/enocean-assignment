@@ -35,3 +35,39 @@ Format per entry:
 - **What was generated:** Dependency startup/readiness verification and baseline build/unit/integration test execution.
 - **Modifications made:** Used elevated execution for Docker-backed checks due sandbox network/socket restrictions.
 - **Files affected:** AI_CODE_SUMMARY.md
+
+## [2026-04-12 16:06:40 CEST] - Task 1 bug analysis guidance
+- **Tool used:** Codex (GPT-5)
+- **What was generated:** Root-cause explanation, suspect areas, and relevant file pointers for the worker concurrency bug.
+- **Modifications made:** Mapped explanation to current failing integration assertions and concrete line-level references.
+- **Files affected:** AI_CODE_SUMMARY.md
+
+## [2026-04-12 17:17:35 CEST] - Existing worker Kafka setup walkthrough
+- **Tool used:** Codex (GPT-5)
+- **What was generated:** Detailed explanation of current worker-to-Kafka integration flow and lifecycle.
+- **Modifications made:** Focused on existing implementation details without introducing new behavior.
+- **Files affected:** AI_CODE_SUMMARY.md
+
+## [2026-04-12 17:29:45 CEST] - Task 1 bug-finding deep dive
+- **Tool used:** Codex (GPT-5)
+- **What was generated:** Precise race-condition diagnosis with code-path timeline and suspect ranking.
+- **Modifications made:** Linked symptoms from failing integration tests to specific buffer flush behaviors.
+- **Files affected:** AI_CODE_SUMMARY.md
+
+## [2026-04-12 17:38:14 CEST] - BufferService walkthrough explanation
+- **Tool used:** Codex (GPT-5)
+- **What was generated:** Method-by-method explanation of existing `BufferService` behavior and data flow.
+- **Modifications made:** Added file-linked references for easier code navigation.
+- **Files affected:** AI_CODE_SUMMARY.md
+
+## [2026-04-12 22:59:40 CEST] - Task 1 race-condition fix implementation
+- **Tool used:** Codex (GPT-5)
+- **What was generated:** `BufferService` concurrency fix with per-device flush serialization and safe batch snapshotting.
+- **Modifications made:** Added in-flight flush tracking, timer helper, flush loop, and failure requeue logic; validated with full tests.
+- **Files affected:** apps/worker/src/buffer.service.ts, AI_CODE_SUMMARY.md
+
+## [2026-04-12 23:09:58 CEST] - Simplified BufferService race fix refactor
+- **Tool used:** Codex (GPT-5)
+- **What was generated:** Minimal lock-based race fix using `flushing` flag and buffer swap pattern per device.
+- **Modifications made:** Replaced prior complex flush strategy with requested simpler implementation and updated shared `BufferEntry` type.
+- **Files affected:** apps/worker/src/buffer.service.ts, libs/common/src/types.ts, AI_CODE_SUMMARY.md
