@@ -78,6 +78,33 @@ npx ts-node apps/worker/src/main.ts
 npx ts-node apps/api/src/main.ts
 ```
 
+## API Endpoints
+
+- `GET /health`
+  - response: `{ status: "ok" }`
+
+- `GET /devices/:deviceId/history`
+  - query:
+    - `sensor` (optional)
+    - `from` / `to` (optional timestamps)
+    - `page` (optional, default `1`)
+    - `limit` (optional, default `50`, max `200`)
+  - response:
+    - `{ data: DeviceHistoryDoc[], total: number, page: number, limit: number }`
+  - behavior:
+    - sorted by `ts` descending
+
+- `GET /devices/:deviceId/sensors/:sensor/aggregate`
+  - query:
+    - `from` (required timestamp)
+    - `to` (required timestamp)
+    - `interval` (required): `1m`, `5m`, `1h`, `1d`
+  - response:
+    - `Array<{ ts: number, min: number, max: number, avg: number, count: number }>`
+  - behavior:
+    - numeric sensor values only
+    - returns `[]` when no matching numeric data exists
+
 ## Environment Variables
 
 | Variable | Default | Description |
@@ -85,6 +112,7 @@ npx ts-node apps/api/src/main.ts
 | `KAFKA_BROKERS` | `localhost:9092` | Kafka broker addresses |
 | `KAFKA_GROUP_ID` | `enocean-worker` | Consumer group ID |
 | `KAFKA_TOPIC` | `device.events` | Topic to consume |
+| `KAFKA_DLQ_TOPIC` | `device.events.dlq` | Dead-letter topic for malformed/failed messages |
 | `MONGO_URI` | `mongodb://localhost:27017` | MongoDB connection URI |
 | `MONGO_DB` | `enocean` | Database name |
 | `FLUSH_INTERVAL_MS` | `500` | Buffer flush interval |

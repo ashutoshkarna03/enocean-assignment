@@ -1,0 +1,14 @@
+1. Set up environment: install Node 20+, run `corepack yarn install --immutable`, ensure Docker is installed and running.  
+2. Start dependencies: `corepack yarn deps:up` then `corepack yarn deps:wait`.  
+3. Capture baseline: run `corepack yarn build`, `corepack yarn test`, `corepack yarn test:integration` and record current failures.  
+4. Fix Task 1 first (highest priority): repair race condition in worker flush path so no event loss/duplication and `devices.latest` always reflects newest value; keep buffering architecture and `FLUSH_DEBUG_DELAY_MS` behavior intact.  
+5. Re-run integration tests repeatedly until stable pass: `corepack yarn test:integration`.  
+6. Implement Task 2 endpoint: `GET /devices/:deviceId/history` with optional filters (`sensor`, `from`, `to`), pagination (`page`, `limit`), sorting by `ts desc`, and input validation.  
+7. Add tests for Task 2 happy path (and ideally validation edge cases).  
+8. Implement Task 3 endpoint: `GET /devices/:deviceId/sensors/:sensor/aggregate` with required `from`, `to`, `interval` (`1m|5m|1h|1d`) using Mongo aggregation and numeric-only values.  
+9. Add Task 3 integration test(s): correct buckets/metrics, no-data behavior, non-numeric filtering.  
+10. Run full verification: `corepack yarn build`, `corepack yarn test`, `corepack yarn test:integration`.  
+11. Update docs and disclosures: append entries in `AI_CODE_SUMMARY.md` for each AI-assisted change and complete `AI_USAGE.md`.  
+12. Final cleanup for submission: ensure focused commits, clear commit messages, push fork, share repo link.
+
+`AI_CODE_SUMMARY.md` has been updated for this prompt.

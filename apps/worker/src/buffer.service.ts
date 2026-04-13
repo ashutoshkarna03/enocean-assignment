@@ -42,7 +42,7 @@ export class BufferService {
   addEvent(event: SensorEvent): void {
     let buffer = this.buffers.get(event.deviceId);
     if (!buffer) {
-      buffer = { items: [], timer: null };
+      buffer = { items: [], timer: null, flushing: false };
       this.buffers.set(event.deviceId, buffer);
     }
 
@@ -52,12 +52,16 @@ export class BufferService {
     if (!buffer.timer) {
       buffer.timer = setTimeout(() => {
         buffer!.timer = null;
-        this.flush(event.deviceId);
+        void this.flush(event.deviceId);
       }, this.intervalMs);
     }
 
     if (buffer.items.length >= this.maxBufferSize) {
-      this.flush(event.deviceId);
+      if (buffer.timer) {
+        clearTimeout(buffer.timer);
+        buffer.timer = null;
+      }
+      void this.flush(event.deviceId);
     }
   }
 
@@ -69,28 +73,30 @@ export class BufferService {
    */
   async flush(deviceId: string): Promise<void> {
     const buffer = this.buffers.get(deviceId);
-    const items = buffer?.items;
-    if (!items?.length) return;
+    if (!buffer?.items.length || buffer.flushing) return;
 
-    const toFlush = items;
+    buffer.flushing = true;
+
+    const toFlush = buffer.items;
+    buffer.items = [];
 
     logger.debug(`Flushing ${toFlush.length} events for ${deviceId}`);
 
-    if (this.debugDelayMs > 0) {
-      await sleep(this.debugDelayMs);
-    }
-
     try {
+      if (this.debugDelayMs > 0) {
+        await sleep(this.debugDelayMs);
+      }
+
       await this.mongoWriter.writeEvents(deviceId, toFlush);
     } catch (err) {
       logger.error(`Flush failed for ${deviceId}: ${(err as Error).message}`);
-      return;
-    }
-    items.length = 0;
+      buffer.items.unshift(...toFlush);
+    } finally {
+      buffer.flushing = false;
 
-    if (buffer?.timer) {
-      clearTimeout(buffer.timer);
-      buffer.timer = null;
+      if (buffer.items.length > 0) {
+        void this.flush(deviceId);
+      }
     }
   }
 
