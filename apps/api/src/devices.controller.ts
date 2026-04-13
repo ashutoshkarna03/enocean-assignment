@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Param, Query } from '@nestjs/common';
 
 import { MongoReaderService } from './mongo-reader.service';
 
@@ -15,8 +15,17 @@ export class DevicesController {
     @Query('page') page?: string,
     @Query('limit') limit?: string,
   ) {
-    const pageNum = page ? parseInt(page, 10) : 1;
-    const limitNum = limit ? parseInt(limit, 10) : 50;
+    const pageNum = this.parsePositiveInt(page, 'page', 1);
+    const limitNum = this.parsePositiveInt(limit, 'limit', 50);
+    if (limitNum > 200) {
+      throw new BadRequestException('limit must be <= 200');
+    }
+
+    const fromTs = this.parseOptionalTimestamp(from, 'from');
+    const toTs = this.parseOptionalTimestamp(to, 'to');
+    if (fromTs !== undefined && toTs !== undefined && fromTs > toTs) {
+      throw new BadRequestException('from must be <= to');
+    }
 
     const history = this.mongoReader.getHistoryCollection();
     const filter: Record<string, any> = { deviceId };
@@ -25,10 +34,10 @@ export class DevicesController {
       filter.sensor = sensor;
     }
 
-    if (from || to) {
+    if (fromTs !== undefined || toTs !== undefined) {
       filter.ts = {};
-      if (from) filter.ts.$gte = parseInt(from, 10);
-      if (to) filter.ts.$lte = parseInt(to, 10);
+      if (fromTs !== undefined) filter.ts.$gte = fromTs;
+      if (toTs !== undefined) filter.ts.$lte = toTs;
     }
 
     const total = await history.countDocuments(filter);
@@ -45,5 +54,23 @@ export class DevicesController {
       page: pageNum,
       limit: limitNum,
     };
+  }
+
+  private parsePositiveInt(value: string | undefined, field: string, defaultValue: number): number {
+    if (value === undefined) return defaultValue;
+    const parsed = Number(value);
+    if (!Number.isInteger(parsed) || parsed < 1) {
+      throw new BadRequestException(`${field} must be a positive integer`);
+    }
+    return parsed;
+  }
+
+  private parseOptionalTimestamp(value: string | undefined, field: string): number | undefined {
+    if (value === undefined) return undefined;
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed)) {
+      throw new BadRequestException(`${field} must be a valid timestamp`);
+    }
+    return parsed;
   }
 }

@@ -101,3 +101,33 @@ Format per entry:
 - **What was generated:** `DevicesController` with `GET /devices/:deviceId/history` route and initial Mongo query/pagination flow.
 - **Modifications made:** Wired the new controller into API module while keeping existing health endpoint intact.
 - **Files affected:** apps/api/src/devices.controller.ts, apps/api/src/api.module.ts, AI_CODE_SUMMARY.md
+
+## [2026-04-13 18:13:53 CEST] - Task 2 Step 3 query validation hardening
+- **Tool used:** Codex (GPT-5)
+- **What was generated:** Input validation for history endpoint query params (`page`, `limit`, `from`, `to`) with bad-request handling.
+- **Modifications made:** Added bounds checks (`limit <= 200`, `from <= to`) and numeric parsing helpers while preserving response contract.
+- **Files affected:** apps/api/src/devices.controller.ts, AI_CODE_SUMMARY.md
+
+## [2026-04-13 18:15:05 CEST] - Task 2 Step 4 controller test coverage
+- **Tool used:** Codex (GPT-5)
+- **What was generated:** Unit tests for device history endpoint happy path and validation failure case.
+- **Modifications made:** Mocked Mongo collection chain (`find/sort/skip/limit/toArray`) to verify filter and pagination behavior without Docker dependencies.
+- **Files affected:** apps/api/src/__tests__/devices.controller.spec.ts, AI_CODE_SUMMARY.md
+
+## [2026-04-13 18:17:50 CEST] - Task 2 Step 5 integration regression verification
+- **Tool used:** Codex (GPT-5)
+- **What was generated:** End-to-end regression verification by running dependencies and integration suite after Task 2 changes.
+- **Modifications made:** Restarted and revalidated Docker dependencies after an initial hook-timeout run to obtain a valid test result.
+- **Files affected:** AI_CODE_SUMMARY.md
+
+## [2026-04-13 18:21:28 CEST] - Task 2 edge-case test expansion
+- **Tool used:** Codex (GPT-5)
+- **What was generated:** Additional Task 2 unit and integration tests covering validation/defaults/filtering/pagination edge cases.
+- **Modifications made:** Reworked API integration test to use direct Mongo client setup to satisfy API tsconfig build constraints.
+- **Files affected:** apps/api/src/__tests__/devices.controller.spec.ts, apps/api/src/__tests__/devices.integration.test.ts, AI_CODE_SUMMARY.md
+
+## [2026-04-13 18:50:46 CEST] - Task 2 acceptance criteria verification
+- **Tool used:** Codex (GPT-5)
+- **What was generated:** Criteria-by-criteria validation summary for Task 2 based on implemented behavior and tests.
+- **Modifications made:** Cross-checked endpoint requirements against controller logic and current unit/integration coverage.
+- **Files affected:** AI_CODE_SUMMARY.md
