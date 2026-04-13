@@ -181,4 +181,56 @@ describe('Devices API Integration', () => {
     expect(res.status).toBe(200);
     expect(body).toEqual([]);
   });
+
+  it('returns 400 for aggregate with invalid interval', async () => {
+    const res = await fetch(
+      `${baseUrl}/devices/device-agg-1/sensors/temperature/aggregate?from=0&to=120000&interval=2m`,
+    );
+    expect(res.status).toBe(400);
+  });
+
+  it('returns 400 for aggregate when from or to is missing', async () => {
+    const missingFrom = await fetch(
+      `${baseUrl}/devices/device-agg-1/sensors/temperature/aggregate?to=120000&interval=1m`,
+    );
+    const missingTo = await fetch(
+      `${baseUrl}/devices/device-agg-1/sensors/temperature/aggregate?from=0&interval=1m`,
+    );
+
+    expect(missingFrom.status).toBe(400);
+    expect(missingTo.status).toBe(400);
+  });
+
+  it('returns empty page data with correct total when history page exceeds available range', async () => {
+    await history.insertMany([
+      {
+        deviceId: 'device-page-1',
+        ts: 1000,
+        sensor: 'temperature',
+        value: 10,
+        ingestedAt: new Date(),
+      },
+      {
+        deviceId: 'device-page-1',
+        ts: 2000,
+        sensor: 'temperature',
+        value: 11,
+        ingestedAt: new Date(),
+      },
+    ]);
+
+    const res = await fetch(`${baseUrl}/devices/device-page-1/history?page=3&limit=1`);
+    const body = (await res.json()) as {
+      data: DeviceHistoryDoc[];
+      total: number;
+      page: number;
+      limit: number;
+    };
+
+    expect(res.status).toBe(200);
+    expect(body.total).toBe(2);
+    expect(body.page).toBe(3);
+    expect(body.limit).toBe(1);
+    expect(body.data).toEqual([]);
+  });
 });

@@ -16,9 +16,9 @@ If you did not use AI tools, state that explicitly.
 
 List all AI tools used:
 
-- Tool name:
-- Version / model (if known):
-- How frequently used: (rare / occasional / heavy)
+- Tool name: Codex (CLI coding assistant)
+- Version / model (if known): GPT-5 family (session model)
+- How frequently used: heavy
 
 Example:
 
@@ -43,9 +43,12 @@ Be specific.
 
 Example:
 
-- Generated initial mutex pattern for buffer locking
-- Suggested Mongo atomic update strategy
-- Drafted integration test structure
+- Implemented and refined `BufferService` race-condition fix with per-device single-flight flush semantics
+- Added Kafka DLQ support (`KAFKA_DLQ_TOPIC`, producer publish on processing failures)
+- Implemented Task 2 history endpoint with filtering, pagination, and validation
+- Implemented Task 3 aggregation endpoint with Mongo pipeline and interval bucketing
+- Added/expanded unit and integration tests for worker and API behavior
+- Updated README endpoint documentation and maintained `AI_CODE_SUMMARY.md` entries
 
 ---
 
@@ -62,10 +65,11 @@ Explain how you verified AI-generated output:
 
 Example:
 
-- Wrote failing test before fix
-- Verified deterministic behavior over 20 runs
-- Reviewed concurrency logic manually
-- Confirmed no event loss in history
+- Ran `corepack yarn build` after each implementation step
+- Ran unit tests via `corepack yarn test` after endpoint and validation changes
+- Ran integration tests via `corepack yarn test:integration` (with Docker deps up/wait)
+- Re-ran integration after environment-related timeouts to ensure true behavioral verification
+- Reviewed query behavior and response contracts against Task acceptance criteria
 
 ---
 
@@ -78,7 +82,6 @@ If AI produced incorrect or unsafe suggestions:
 
 Example:
 
-- AI suggested global lock — rejected because it removed concurrency
-- Replaced with per-device async lock
-
-If none:
+- Initially implemented a more complex flush-loop/in-flight map approach for Task 1
+- Replaced it with a simpler requested `flushing` boolean lock + buffer swap approach in `BufferService`
+- Fixed transient TypeScript issues in new tests (resolver typing and API test helper imports)

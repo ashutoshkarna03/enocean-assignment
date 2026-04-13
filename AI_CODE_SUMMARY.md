@@ -167,3 +167,15 @@ Format per entry:
 - **What was generated:** Final Task 3 acceptance check with full build/test/integration runs and API endpoint documentation updates.
 - **Modifications made:** Added Task 2/Task 3 endpoint contract details in README and revalidated all suites with dependencies ready.
 - **Files affected:** README.md, AI_CODE_SUMMARY.md
+
+## [2026-04-13 21:05:46 CEST] - Final assignment audit and disclosure completion
+- **Tool used:** Codex (GPT-5)
+- **What was generated:** Final done/not-done audit against `TASKS.md`, completed AI usage disclosure, and full test-all verification.
+- **Modifications made:** Filled `AI_USAGE.md` template with concrete usage/verification/corrections details and validated all tests.
+- **Files affected:** AI_USAGE.md, AI_CODE_SUMMARY.md
+
+## [2026-04-13 21:08:00 CEST] - Additional API integration edge-case tests
+- **Tool used:** Codex (GPT-5)
+- **What was generated:** Three extra integration tests for aggregate validation and out-of-range history pagination behavior.
+- **Modifications made:** Added checks for invalid interval, missing aggregate `from/to`, and empty paginated history data with correct total.
+- **Files affected:** apps/api/src/__tests__/devices.integration.test.ts, AI_CODE_SUMMARY.md
