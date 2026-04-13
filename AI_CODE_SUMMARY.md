@@ -83,3 +83,21 @@ Format per entry:
 - **What was generated:** New BufferService unit tests for single-flight flush behavior, failure requeue, timer clearing, and debug delay.
 - **Modifications made:** Fixed strict TypeScript typing in async resolver setup and validated with build/unit/integration test runs.
 - **Files affected:** apps/worker/src/__tests__/buffer.service.spec.ts, AI_CODE_SUMMARY.md
+
+## [2026-04-12 23:24:13 CEST] - Task 2 explanation and implementation plan
+- **Tool used:** Codex (GPT-5)
+- **What was generated:** Clarified Task 2 requirements and produced a stepwise implementation approach.
+- **Modifications made:** Tailored steps to the current API/worker repository structure and existing patterns.
+- **Files affected:** AI_CODE_SUMMARY.md
+
+## [2026-04-13 18:08:26 CEST] - Task 2 Step 1 API Mongo reader setup
+- **Tool used:** Codex (GPT-5)
+- **What was generated:** API-side Mongo reader service with Nest lifecycle hooks and module wiring through `APP_CONFIG`.
+- **Modifications made:** Kept changes minimal and non-breaking, preparing for history endpoint implementation in next steps.
+- **Files affected:** apps/api/src/api.module.ts, apps/api/src/mongo-reader.service.ts, AI_CODE_SUMMARY.md
+
+## [2026-04-13 18:11:17 CEST] - Task 2 Step 2 history route scaffolding
+- **Tool used:** Codex (GPT-5)
+- **What was generated:** `DevicesController` with `GET /devices/:deviceId/history` route and initial Mongo query/pagination flow.
+- **Modifications made:** Wired the new controller into API module while keeping existing health endpoint intact.
+- **Files affected:** apps/api/src/devices.controller.ts, apps/api/src/api.module.ts, AI_CODE_SUMMARY.md
