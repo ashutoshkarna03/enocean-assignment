@@ -131,3 +131,39 @@ Format per entry:
 - **What was generated:** Criteria-by-criteria validation summary for Task 2 based on implemented behavior and tests.
 - **Modifications made:** Cross-checked endpoint requirements against controller logic and current unit/integration coverage.
 - **Files affected:** AI_CODE_SUMMARY.md
+
+## [2026-04-13 18:56:58 CEST] - Task 3 planning and step breakdown
+- **Tool used:** Codex (GPT-5)
+- **What was generated:** Detailed implementation plan and ordered execution steps for sensor aggregation endpoint (Task 3).
+- **Modifications made:** Aligned plan with existing API controller pattern and Mongo-based query model used in Task 2.
+- **Files affected:** AI_CODE_SUMMARY.md
+
+## [2026-04-13 20:53:56 CEST] - Task 3 Step 1 aggregate route scaffolding
+- **Tool used:** Codex (GPT-5)
+- **What was generated:** Added `GET /devices/:deviceId/sensors/:sensor/aggregate` endpoint skeleton in API controller.
+- **Modifications made:** Kept placeholder implementation returning empty array to preserve incremental delivery before validation/pipeline logic.
+- **Files affected:** apps/api/src/devices.controller.ts, AI_CODE_SUMMARY.md
+
+## [2026-04-13 20:56:44 CEST] - Task 3 Step 2 aggregate input validation
+- **Tool used:** Codex (GPT-5)
+- **What was generated:** Required validation for `from`, `to`, and `interval` in aggregate endpoint with strict error handling.
+- **Modifications made:** Added helper parsers for required timestamps and allowed interval values, including `from <= to` check.
+- **Files affected:** apps/api/src/devices.controller.ts, AI_CODE_SUMMARY.md
+
+## [2026-04-13 20:58:04 CEST] - Task 3 Step 3 aggregation pipeline implementation
+- **Tool used:** Codex (GPT-5)
+- **What was generated:** Mongo aggregation pipeline for sensor buckets with numeric-only filtering and min/max/avg/count output.
+- **Modifications made:** Added interval-to-milliseconds mapping and wired endpoint to query `devices.history` directly.
+- **Files affected:** apps/api/src/devices.controller.ts, AI_CODE_SUMMARY.md
+
+## [2026-04-13 21:01:29 CEST] - Task 3 Step 4 aggregation test coverage
+- **Tool used:** Codex (GPT-5)
+- **What was generated:** Unit and integration tests for aggregate endpoint validation, bucketed metrics, numeric-only filtering, and empty-result behavior.
+- **Modifications made:** Expanded existing API test suites to cover Task 3 scenarios while preserving prior Task 1/Task 2 regression checks.
+- **Files affected:** apps/api/src/__tests__/devices.controller.spec.ts, apps/api/src/__tests__/devices.integration.test.ts, AI_CODE_SUMMARY.md
+
+## [2026-04-13 21:03:20 CEST] - Task 3 Step 5 acceptance verification and README updates
+- **Tool used:** Codex (GPT-5)
+- **What was generated:** Final Task 3 acceptance check with full build/test/integration runs and API endpoint documentation updates.
+- **Modifications made:** Added Task 2/Task 3 endpoint contract details in README and revalidated all suites with dependencies ready.
+- **Files affected:** README.md, AI_CODE_SUMMARY.md

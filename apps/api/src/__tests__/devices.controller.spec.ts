@@ -135,4 +135,54 @@ describe('DevicesController', () => {
       BadRequestException,
     );
   });
+
+  it('returns aggregate data for valid sensor aggregate request', async () => {
+    const aggregateData = [{ ts: 120000, min: 10, max: 20, avg: 15, count: 2 }];
+    const toArray = jest.fn().mockResolvedValue(aggregateData);
+    const aggregate = jest.fn().mockReturnValue({ toArray });
+
+    const mongoReader = {
+      getHistoryCollection: () => ({
+        aggregate,
+      }),
+    } as unknown as MongoReaderService;
+
+    const controller = new DevicesController(mongoReader);
+    const result = await controller.getSensorAggregate('device-1', 'temperature', '100000', '180000', '1m');
+
+    expect(aggregate).toHaveBeenCalledTimes(1);
+    expect(result).toEqual(aggregateData);
+  });
+
+  it('throws bad request when aggregate interval is invalid', async () => {
+    const mongoReader = {
+      getHistoryCollection: () => ({
+        aggregate: jest.fn(),
+      }),
+    } as unknown as MongoReaderService;
+
+    const controller = new DevicesController(mongoReader);
+    await expect(controller.getSensorAggregate('device-1', 'temperature', '100', '200', '2m')).rejects.toBeInstanceOf(
+      BadRequestException,
+    );
+  });
+
+  it('throws bad request when aggregate timestamps are missing or invalid', async () => {
+    const mongoReader = {
+      getHistoryCollection: () => ({
+        aggregate: jest.fn(),
+      }),
+    } as unknown as MongoReaderService;
+
+    const controller = new DevicesController(mongoReader);
+    await expect(controller.getSensorAggregate('device-1', 'temperature', undefined, '200', '1m')).rejects.toBeInstanceOf(
+      BadRequestException,
+    );
+    await expect(controller.getSensorAggregate('device-1', 'temperature', 'abc', '200', '1m')).rejects.toBeInstanceOf(
+      BadRequestException,
+    );
+    await expect(controller.getSensorAggregate('device-1', 'temperature', '300', '200', '1m')).rejects.toBeInstanceOf(
+      BadRequestException,
+    );
+  });
 });

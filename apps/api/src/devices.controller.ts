@@ -56,6 +56,72 @@ export class DevicesController {
     };
   }
 
+  @Get(':deviceId/sensors/:sensor/aggregate')
+  async getSensorAggregate(
+    @Param('deviceId') deviceId: string,
+    @Param('sensor') sensor: string,
+    @Query('from') from?: string,
+    @Query('to') to?: string,
+    @Query('interval') interval?: string,
+  ) {
+    const fromTs = this.parseRequiredTimestamp(from, 'from');
+    const toTs = this.parseRequiredTimestamp(to, 'to');
+    if (fromTs > toTs) {
+      throw new BadRequestException('from must be <= to');
+    }
+
+    const intervalMs = this.intervalToMs(this.parseInterval(interval));
+    const history = this.mongoReader.getHistoryCollection();
+
+    const data = await history
+      .aggregate<{ ts: number; min: number; max: number; avg: number; count: number }>([
+        {
+          $match: {
+            deviceId,
+            sensor,
+            ts: { $gte: fromTs, $lte: toTs },
+          },
+        },
+        {
+          $match: {
+            $expr: { $isNumber: '$value' },
+          },
+        },
+        {
+          $addFields: {
+            bucketTs: {
+              $multiply: [{ $floor: { $divide: ['$ts', intervalMs] } }, intervalMs],
+            },
+          },
+        },
+        {
+          $group: {
+            _id: '$bucketTs',
+            min: { $min: '$value' },
+            max: { $max: '$value' },
+            avg: { $avg: '$value' },
+            count: { $sum: 1 },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            ts: '$_id',
+            min: 1,
+            max: 1,
+            avg: 1,
+            count: 1,
+          },
+        },
+        {
+          $sort: { ts: 1 },
+        },
+      ])
+      .toArray();
+
+    return data;
+  }
+
   private parsePositiveInt(value: string | undefined, field: string, defaultValue: number): number {
     if (value === undefined) return defaultValue;
     const parsed = Number(value);
@@ -72,5 +138,30 @@ export class DevicesController {
       throw new BadRequestException(`${field} must be a valid timestamp`);
     }
     return parsed;
+  }
+
+  private parseRequiredTimestamp(value: string | undefined, field: string): number {
+    if (value === undefined) {
+      throw new BadRequestException(`${field} is required`);
+    }
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed)) {
+      throw new BadRequestException(`${field} must be a valid timestamp`);
+    }
+    return parsed;
+  }
+
+  private parseInterval(value: string | undefined): '1m' | '5m' | '1h' | '1d' {
+    if (value === '1m' || value === '5m' || value === '1h' || value === '1d') {
+      return value;
+    }
+    throw new BadRequestException('interval must be one of: 1m, 5m, 1h, 1d');
+  }
+
+  private intervalToMs(interval: '1m' | '5m' | '1h' | '1d'): number {
+    if (interval === '1m') return 60_000;
+    if (interval === '5m') return 300_000;
+    if (interval === '1h') return 3_600_000;
+    return 86_400_000;
   }
 }
